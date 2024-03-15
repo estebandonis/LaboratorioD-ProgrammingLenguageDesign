@@ -5,6 +5,8 @@ import dfa_directly as dfa_dir
 import dfa_minimization as dfa_min
 import simuladorAFD as simAFD
 import arbol as tree
+import time
+import pickle
 
 def readYalexFile(file):
     with open(file, 'r') as file:
@@ -42,7 +44,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
             sys.exit()
 
         return infix_regex, i, new_infix
-    
+
 
     def handle_comilla (infix_regex, i, new_infix):
         if i + 2 < len(infix_regex):
@@ -69,7 +71,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
             i += 1
 
         return infix_regex, i, new_infix
-    
+
 
     def handle_double_comilla (infix_regex, i, new_infix):
         temp_regex = []
@@ -91,14 +93,14 @@ def ASCIITransformer(infix_regex, check_operators = False):
             else:
                 new_infix.append(ord(temp_regex[h]))
                 h += 1
-            
+
         if j + 1 < len(infix_regex) and (infix_regex[j + 1] == '\'' or infix_regex[j + 1] == '\"'):
             new_infix.append('|')
 
         i = j + 1
 
         return infix_regex, j + 1, new_infix
-    
+
     def handle_double_comilla_brackets (infix_regex, i, new_infix):
         temp_regex = []
 
@@ -120,14 +122,14 @@ def ASCIITransformer(infix_regex, check_operators = False):
             else:
                 new_infix.append(ord(temp_regex[h]))
                 h += 1
-                
+
             if h < (len(temp_regex)):
                 new_infix.append('|')
 
         i = j + 1
 
         return infix_regex, j + 1, new_infix
-    
+
 
     def handle_brackets (infix_regex, i, new_infix):
         temp_regex = []
@@ -180,15 +182,15 @@ def ASCIITransformer(infix_regex, check_operators = False):
             elif char == '\"':
                 temp_regex, l, new_infix = handle_double_comilla_brackets(temp_regex, l, new_infix)
                 continue
-            else: 
+            else:
                 new_infix.append(ord(char))
                 l += 1
-        
+
         i = j + 1
         new_infix.append(')')
         return infix_regex, i, new_infix
-    
-    
+
+
     def handle_negate (infix_regex, i, new_infix):
         next = infix_regex[i+1]
         if next == '(':
@@ -207,7 +209,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     temp, a, new_infix = handle_slash(temp, a, new_infix)
                     continue
                 new_temp.append(ord(t))
-                a += 1 
+                a += 1
 
             j = 0
             for j in range(0, Universo + 1):
@@ -218,7 +220,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     new_infix.append(j)
                     new_infix.append('|')
                 j += 1
-                
+
         elif next == '[':
             Set = []
             infix_regex, i, Set = handle_brackets(infix_regex, i, Set)
@@ -238,7 +240,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     new_infix.append(j)
                     new_infix.append('|')
                 j += 1
-            
+
 
         else:
             next_ascii = ord(next)
@@ -255,7 +257,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         i += 2
 
         return infix_regex, i, new_infix
-    
+
 
     def char_universe (infix_regex, i, new_infix):
         p = 0
@@ -270,7 +272,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         i += 1
 
         return infix_regex, i, new_infix
-    
+
 
     def char_arroba (infix_regex, i, new_infix):
         i += 1
@@ -306,7 +308,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         new_infix.append(')')
 
         return infix_regex, i, new_infix
-    
+
 
     operadores = ['*', '+', '?', '|', '(', ')', '!']
 
@@ -324,7 +326,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         elif char == '\\':
             infix_regex, i, new_infix = handle_slash(infix_regex, i, new_infix)
             continue
-        
+
         elif char == '\'':
             infix_regex, i, new_infix = handle_comilla(infix_regex, i, new_infix)
             continue
@@ -332,7 +334,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         elif char == '[':
             infix_regex, i, new_infix = handle_brackets(infix_regex, i, new_infix)
             continue
-        
+
         elif char == '^':
             infix_regex, i, new_infix = handle_negate(infix_regex, i, new_infix)
             continue
@@ -344,15 +346,15 @@ def ASCIITransformer(infix_regex, check_operators = False):
         elif char == '_':
             infix_regex, i, new_infix = char_universe(infix_regex, i, new_infix)
             continue
-        
+
         elif char == '#':
             infix_regex, i, new_infix = char_arroba(infix_regex, i, new_infix)
             continue
-            
+
         else:
             if check_operators:
                 print("Error léxico, operador no reconocido: ", char)
-                sys.exit()             
+                sys.exit()
             else:
                 new_infix.append(ord(char))
                 i += 1
@@ -394,7 +396,7 @@ def main():
     operadores = ['*', '+', '?', '|', '(', ')', '!']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-    archivo = "slr-4.yal"
+    archivo = "slr-1.yal"
 
     Machines = {
         "Commentarios": "\"(*\" *[' '-'&''+'-'}''á''é''í''ó''ú''ñ''\n''\t']* *\"*)\"",
@@ -406,8 +408,10 @@ def main():
         "Returns": "{ *return *['A'-'Z']* *}",
     }
 
+    start_time = time.time()
+
     ascii_comments = Machines['Commentarios']
-    print("Generando AFD para comentarios")    
+    print("Generando AFD para comentarios")
     comments_states, comments_transitions, comments_inicial, comments_final = getMachine(ascii_comments)
     print("AFD para comentarios generado")
 
@@ -475,7 +479,7 @@ def main():
                 print(values)
                 sys.exit()
             continue
-        
+
         if read_tokens == False:
             bol, num, valores = simAFD.exec(declaration_transitions, declaration_inicial, declaration_final, data, i)
             if bol:
@@ -503,7 +507,7 @@ def main():
                 contador += 1
                 i = num
                 continue
-    
+
         if read_tokens:
             bol, num, valores = simAFD.exec(returns_transitions, returns_inicial, returns_final, data, i)
             if bol:
@@ -539,11 +543,11 @@ def main():
                 contador += 1
                 i = num
                 continue
-    
+
         if data[i] == ' ' or data[i] == '\n' or data[i] == '\t':
             i += 1
             continue
-    
+
         else:
             print("Error lexico en la linea: ", data[i])
             sys.exit()
@@ -551,7 +555,7 @@ def main():
     if tokens == []:
         print("Error léxico, no se encontraron tokens")
         sys.exit()
-    
+
     print("Diccionario")
     for i in diccionario:
         print(i, ": ", diccionario[i])
@@ -626,5 +630,60 @@ def main():
     super_postfix = shun.exec(ascii_super)
     print(super_postfix)
     stack, node_list, alfabeto = tree.exec(super_postfix, True)
+
+    print("Creando DFA Directo")
+
+    estadoscon, alfabetocon, Dtran, estado_inicialcon, estado_finalcon = dfa_dir.exec(stack, node_list, alfabeto)
+
+    print("DFA Directo terminado")
+
+    estadosAFD = set()
+    for i in estadoscon:
+        estadosAFD.add(str(i))
+
+    alfabetoAFD = set()
+    for i in alfabetocon:
+        alfabetoAFD.add(str(i))
+
+    transicionesAFD = set()
+    for tran in Dtran:
+        trans = ()
+        for t in tran:
+            trans = trans + (str(t),)
+        transicionesAFD.add(trans)
+
+    estado_inicialAFD = {str(estado_inicialcon)}
+
+    estados_aceptacionAFD = set()
+    for i in estado_finalcon:
+        estados_aceptacionAFD.add(str(i))
+
+    print("Creando DFA Minimizacion")
+
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, "pngs/dfa_graph_minimized_conversion.png")
+
+    print("DFA Minimizado terminado")
+
+    DFAMin = {
+        "states": new_states,
+        "transitions": new_transitions,
+        "symbols": symbols,
+        "start_states": newStart_states,
+        "final_states": newFinal_states
+    }
+
+    with open('DFAMin.pickle', 'wb') as f:
+        pickle.dump(DFAMin, f)
+
+    print("DFAMin guardado")
+
+    end_time = time.time()
+
+    time_taken = end_time - start_time
+
+    print(f"\nTime taken by the operation is {time_taken} seconds")
+
+    # print("\nSimulador AFD (Minimizacion de Conversion Directa): ")
+    # simAFD.exec(symbols, new_transitions, newStart_states, newFinal_states, new_cadena)
 
 main()

@@ -143,15 +143,12 @@ def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, li
         tran = (dictionary[tran[0]], tran[1], dictionary[tran[2]])
         transitions.append(tran)
 
-    # Write information to a text file
-    # write_info_to_file(new_states_changed, inicial, final, transitions, "texts/minimized_dfa_info.txt")
+    pydotplus.find_graphviz()
 
-    # pydotplus.find_graphviz()
+    # Crear el grafo del DFA minimizado
+    graph = create_dfa_graph(new_states_changed, final, transitions, inicial)
 
-    # # Crear el grafo del DFA minimizado
-    # graph = create_dfa_graph(new_states_changed, final, transitions, inicial)
-
-    # # Guardar o mostrar el gráfico
-    # graph.write_png(link)  # Guardar archivo PNG
+    # Guardar o mostrar el gráfico
+    graph.write_png("pngs/dfa_graph_minimized_conversion.png")  # Guardar archivo PNG
 
     return new_states_changed, new_alfabeto, transitions, inicial[0], final
