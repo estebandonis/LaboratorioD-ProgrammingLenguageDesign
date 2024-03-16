@@ -36,8 +36,9 @@ def create_dfa_graph(states, acceptance_states, transitions, start_state):
 
     # Agrega transiciones como arcos
     for (source, symbol, target) in transitions:
-        edge = pydotplus.Edge(state_nodes[str(source)], state_nodes[str(target)], label=symbol)
-        dot.add_edge(edge)
+        if str(source) in state_nodes and str(target) in state_nodes:
+            edge = pydotplus.Edge(state_nodes[str(source)], state_nodes[str(target)], label=symbol)
+            dot.add_edge(edge)
 
     return dot
 
@@ -80,7 +81,7 @@ def set_estados(primer, elements, node_list, Dtran, Destados):
     return elements, node_list, Dtran, Destados
 
 
-def exec(stack_arbol, node_list, alfabeto):
+def exec(stack_arbol, node_list, alfabeto, graph=False):
 
     Destados = []
     Dtran = []
@@ -118,12 +119,13 @@ def exec(stack_arbol, node_list, alfabeto):
 
     estado_inicial = Destados[0][0]
 
-    # pydotplus.find_graphviz()
+    if graph:
+        pydotplus.find_graphviz()
 
-    # graph = create_dfa_graph(estados, estado_final, Dtran, estado_inicial)
+        graph = create_dfa_graph(estados, estado_final, Dtran, estado_inicial)
 
-    # # Save or display the graph
-    # png_file_path = "pngs/dfa_direct_graph.png"
-    # graph.write_png(png_file_path)  # Save PNG file
+        # Save or display the graph
+        png_file_path = "pngs/dfa_direct_graph.png"
+        graph.write_png(png_file_path)  # Save PNG file
 
     return estados, alfabeto, Dtran, estado_inicial, estado_final

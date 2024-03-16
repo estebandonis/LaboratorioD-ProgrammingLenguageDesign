@@ -1,7 +1,18 @@
 import pickle
+import simuladorAFD as simAFD
+
+def readYalexFile(file):
+    with open(file, 'r') as file:
+        data = file.read()
+    return data
 
 def main():
     print("scan.py: main()")
+
+    archivo = "string.txt"
+
+    # Leer .txt
+    data = readYalexFile(archivo)
 
     DFAMin = {}
     # Load the data
@@ -15,6 +26,27 @@ def main():
                 print(item)
         else:
             print(DFAMin[key])
+
+    code = """
+    number = 1234
+    print(number)
+    """
+
+    # Remove leading spaces from each line in the string
+    code = '\n'.join(line.lstrip() for line in code.split('\n'))
+
+    exec(code)
+
+    i = 0
+    contador = 0
+    length_data = len(data)
+
+    while i < length_data:
+        bol, num, valores = simAFD.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["final_states"], data, i)
+        print("Comentario: " + valores)
+        contador += 1
+        i = num
+        continue
 
 if __name__ == "__main__":
     main()

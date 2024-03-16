@@ -38,9 +38,9 @@ def create_dfa_graph(states, acceptance_states, transitions, start_state):
 
     # Agrega transiciones como arcos
     for (source, symbol, target) in transitions:
-        edge = pydotplus.Edge(
-            state_nodes[source], state_nodes[target], label=symbol)
-        dot.add_edge(edge)
+        if str(source) in state_nodes and str(target) in state_nodes:
+            edge = pydotplus.Edge(state_nodes[str(source)], state_nodes[str(target)], label=symbol)
+            dot.add_edge(edge)
 
     return dot
 
@@ -53,7 +53,7 @@ def write_info_to_file(states, inicial, final, transiciones, file_path):
         file.write("Transicion = " + str(transiciones) + "\n")
 
 
-def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, link):
+def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, graph=False):
 
     new_transitions = []
 
@@ -116,7 +116,8 @@ def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, li
                 for tran in transiciones:
                     if old_state == tran[0]:
                         if not find_if_duplicate(new_state, tran[1], new_transitions):
-                            new_transitions.append((new_state, tran[1], old_to_new[tran[2]]))
+                            if tran[2] in old_to_new:
+                                new_transitions.append((new_state, tran[1], old_to_new[tran[2]]))
 
     new_estado_inicial = list(str(old_to_new[estado]) for estado in estado_inicial)
     new_estados_aceptacion = list(str(old_to_new[state]) for state in estados_aceptacion)
@@ -143,12 +144,13 @@ def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, li
         tran = (dictionary[tran[0]], tran[1], dictionary[tran[2]])
         transitions.append(tran)
 
-    pydotplus.find_graphviz()
+    if graph:
+        pydotplus.find_graphviz()
 
-    # Crear el grafo del DFA minimizado
-    graph = create_dfa_graph(new_states_changed, final, transitions, inicial)
+        # Crear el grafo del DFA minimizado
+        graph = create_dfa_graph(new_states_changed, final, transitions, inicial)
 
-    # Guardar o mostrar el gráfico
-    graph.write_png("pngs/dfa_graph_minimized_conversion.png")  # Guardar archivo PNG
+        # Guardar o mostrar el gráfico
+        graph.write_png("pngs/dfa_graph_minimized_conversion.png")  # Guardar archivo PNG
 
     return new_states_changed, new_alfabeto, transitions, inicial[0], final

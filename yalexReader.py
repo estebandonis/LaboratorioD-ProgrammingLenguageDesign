@@ -387,7 +387,7 @@ def getMachine(regex):
     for i in estado_finalcon:
         estados_aceptacionAFD.add(str(i))
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, "pngs/dfa_graph_minimized_conversion.png")
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD)
     return new_states, new_transitions, newStart_states, newFinal_states
 
 
@@ -396,7 +396,7 @@ def main():
     operadores = ['*', '+', '?', '|', '(', ')', '!']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-    archivo = "slr-1.yal"
+    archivo = "slr-2.yal"
 
     Machines = {
         "Commentarios": "\"(*\" *[' '-'&''+'-'}''á''é''í''ó''ú''ñ''\n''\t']* *\"*)\"",
@@ -623,7 +623,7 @@ def main():
 
     ascii_super = ASCIITransformer(super_string, True)
 
-    print()
+    print("\nSuper String en ASCII:")
     print(ascii_super)
     print()
 
@@ -633,7 +633,7 @@ def main():
 
     print("Creando DFA Directo")
 
-    estadoscon, alfabetocon, Dtran, estado_inicialcon, estado_finalcon = dfa_dir.exec(stack, node_list, alfabeto)
+    estadoscon, alfabetocon, Dtran, estado_inicialcon, estado_finalcon = dfa_dir.exec(stack, node_list, alfabeto, True)
 
     print("DFA Directo terminado")
 
@@ -660,7 +660,7 @@ def main():
 
     print("Creando DFA Minimizacion")
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, "pngs/dfa_graph_minimized_conversion.png")
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, False)
 
     print("DFA Minimizado terminado")
 
@@ -682,8 +682,5 @@ def main():
     time_taken = end_time - start_time
 
     print(f"\nTime taken by the operation is {time_taken} seconds")
-
-    # print("\nSimulador AFD (Minimizacion de Conversion Directa): ")
-    # simAFD.exec(symbols, new_transitions, newStart_states, newFinal_states, new_cadena)
 
 main()
