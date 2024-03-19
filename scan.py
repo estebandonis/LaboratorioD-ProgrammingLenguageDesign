@@ -27,21 +27,27 @@ def main():
         else:
             print(DFAMin[key])
 
-    code = """
-    number = 1234
-    print(number)
-    """
+    # # Execute the code
 
-    # Remove leading spaces from each line in the string
-    code = '\n'.join(line.lstrip() for line in code.split('\n'))
+    # code = """
+    # number = 1234
+    # print(number)
+    # """
 
-    exec(code)
+    # print("hola")
+
+    # # Remove leading spaces from each line in the string
+    # code = '\n'.join(line.lstrip() for line in code.split('\n'))
+
+    # exec(code)
 
     i = 0
     contador = 0
-    length_data = len(data)
 
-    while i < length_data:
+    lengthData = len(data)
+
+    while i < lengthData:
+        print("i: " + str(i))
         bol, num, valores = simAFD.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["final_states"], data, i)
         print("Comentario: " + valores)
         contador += 1

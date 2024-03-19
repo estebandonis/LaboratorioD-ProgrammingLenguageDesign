@@ -633,7 +633,15 @@ def main():
 
     print("Creando DFA Directo")
 
-    estadoscon, alfabetocon, Dtran, estado_inicialcon, estado_finalcon = dfa_dir.exec(stack, node_list, alfabeto, True)
+    estadoscon, alfabetocon, Dtran, estado_inicialcon, estado_finalcon = dfa_dir.exec(stack, node_list, alfabeto)
+
+    DFAdirect = {
+        "states": estadoscon,
+        "transitions": Dtran,
+        "symbols": alfabetocon,
+        "start_states": estado_inicialcon,
+        "final_states": estado_finalcon
+    }
 
     print("DFA Directo terminado")
 
@@ -660,7 +668,7 @@ def main():
 
     print("Creando DFA Minimizacion")
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, False)
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD)
 
     print("DFA Minimizado terminado")
 
