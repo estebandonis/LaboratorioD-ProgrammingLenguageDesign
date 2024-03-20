@@ -419,7 +419,6 @@ def main():
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
     archivo = "slr-2.yal"
-
     Machines = {
         "Commentarios": "\"(*\" *[' '-'&''+'-'}''á''é''í''ó''ú''ñ''\n''\t']* *\"*)\"",
         "Declaration": "let +['a'-'z']* +=",
@@ -427,7 +426,7 @@ def main():
         "Reglas": "rule *tokens *=",
         "Tokens1": "['&'-'}']+",
         "Tokens2": "'|' *['\"'-'}']*",
-        "Returns": "{ *return *['A'-'Z']* *}",
+        "Returns": "{ *(^})*}",
     }
 
     start_time = time.time()
@@ -648,14 +647,8 @@ def main():
 
     ascii_super = ASCIITransformer(super_string, True)
 
-    # ascii_super.insert(8, 'print(\'ws\')')
-    # ascii_super.insert(245, 'print(\'letter\')')
-    # ascii_super.insert(248, 'print(\'43\')')
-    # ascii_super.insert(251, 'print(\'42\')')
-    # ascii_super.insert(254, 'print(\'40\')')
-    # ascii_super.insert(257, 'print(\'41\')')
-
-    
+    for tok in tokens_dictionary:
+        print(tok, ": ", tokens_dictionary[tok])    
 
     print("\nSuper String en ASCII:")
     print(ascii_super)
