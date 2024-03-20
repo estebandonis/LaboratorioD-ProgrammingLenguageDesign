@@ -44,7 +44,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
             sys.exit()
 
         return infix_regex, i, new_infix
-
+    
 
     def handle_comilla (infix_regex, i, new_infix):
         if i + 2 < len(infix_regex):
@@ -71,7 +71,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
             i += 1
 
         return infix_regex, i, new_infix
-
+    
 
     def handle_double_comilla (infix_regex, i, new_infix):
         temp_regex = []
@@ -93,14 +93,14 @@ def ASCIITransformer(infix_regex, check_operators = False):
             else:
                 new_infix.append(ord(temp_regex[h]))
                 h += 1
-
+            
         if j + 1 < len(infix_regex) and (infix_regex[j + 1] == '\'' or infix_regex[j + 1] == '\"'):
             new_infix.append('|')
 
         i = j + 1
 
         return infix_regex, j + 1, new_infix
-
+    
     def handle_double_comilla_brackets (infix_regex, i, new_infix):
         temp_regex = []
 
@@ -118,18 +118,17 @@ def ASCIITransformer(infix_regex, check_operators = False):
         while h < len(temp_regex):
             if temp_regex[h] == '\\':
                 infix_regex, h, new_infix = handle_slash(temp_regex, h, new_infix)
-                continue
             else:
                 new_infix.append(ord(temp_regex[h]))
                 h += 1
-
+                
             if h < (len(temp_regex)):
                 new_infix.append('|')
 
         i = j + 1
 
         return infix_regex, j + 1, new_infix
-
+    
 
     def handle_brackets (infix_regex, i, new_infix):
         temp_regex = []
@@ -182,15 +181,15 @@ def ASCIITransformer(infix_regex, check_operators = False):
             elif char == '\"':
                 temp_regex, l, new_infix = handle_double_comilla_brackets(temp_regex, l, new_infix)
                 continue
-            else:
+            else: 
                 new_infix.append(ord(char))
                 l += 1
-
+        
         i = j + 1
         new_infix.append(')')
         return infix_regex, i, new_infix
-
-
+    
+    
     def handle_negate (infix_regex, i, new_infix):
         next = infix_regex[i+1]
         if next == '(':
@@ -209,7 +208,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     temp, a, new_infix = handle_slash(temp, a, new_infix)
                     continue
                 new_temp.append(ord(t))
-                a += 1
+                a += 1 
 
             j = 0
             for j in range(0, Universo + 1):
@@ -220,7 +219,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     new_infix.append(j)
                     new_infix.append('|')
                 j += 1
-
+                
         elif next == '[':
             Set = []
             infix_regex, i, Set = handle_brackets(infix_regex, i, Set)
@@ -240,7 +239,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     new_infix.append(j)
                     new_infix.append('|')
                 j += 1
-
+            
 
         else:
             next_ascii = ord(next)
@@ -257,7 +256,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         i += 2
 
         return infix_regex, i, new_infix
-
+    
 
     def char_universe (infix_regex, i, new_infix):
         p = 0
@@ -272,7 +271,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         i += 1
 
         return infix_regex, i, new_infix
-
+    
 
     def char_arroba (infix_regex, i, new_infix):
         i += 1
@@ -308,7 +307,26 @@ def ASCIITransformer(infix_regex, check_operators = False):
         new_infix.append(')')
 
         return infix_regex, i, new_infix
+    
 
+    def corchetes (infix_regex, i, new_infix):
+        temp_regex = ''
+        j = i + 1
+
+        while j < len(infix_regex) and infix_regex[j] != '}':
+            temp_regex += infix_regex[j]
+            j += 1
+        
+        if temp_regex[0] == ' ':
+            temp_regex = temp_regex[1:]
+        if temp_regex[-1] == ' ':
+            temp_regex = temp_regex[:-1]
+
+        new_infix.append(temp_regex)
+        
+        i = j + 1
+
+        return infix_regex, i, new_infix
 
     operadores = ['*', '+', '?', '|', '(', ')', '!']
 
@@ -326,7 +344,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         elif char == '\\':
             infix_regex, i, new_infix = handle_slash(infix_regex, i, new_infix)
             continue
-
+        
         elif char == '\'':
             infix_regex, i, new_infix = handle_comilla(infix_regex, i, new_infix)
             continue
@@ -334,7 +352,7 @@ def ASCIITransformer(infix_regex, check_operators = False):
         elif char == '[':
             infix_regex, i, new_infix = handle_brackets(infix_regex, i, new_infix)
             continue
-
+        
         elif char == '^':
             infix_regex, i, new_infix = handle_negate(infix_regex, i, new_infix)
             continue
@@ -346,15 +364,19 @@ def ASCIITransformer(infix_regex, check_operators = False):
         elif char == '_':
             infix_regex, i, new_infix = char_universe(infix_regex, i, new_infix)
             continue
-
+        
         elif char == '#':
             infix_regex, i, new_infix = char_arroba(infix_regex, i, new_infix)
             continue
-
+            
         else:
             if check_operators:
-                print("Error léxico, operador no reconocido: ", char)
-                sys.exit()
+                if char == '{':
+                    infix_regex, i, new_infix = corchetes(infix_regex, i, new_infix)
+                    continue
+                else:
+                    print("Error léxico, operador no reconocido: ", char)
+                    sys.exit()             
             else:
                 new_infix.append(ord(char))
                 i += 1
@@ -608,8 +630,11 @@ def main():
 
     i = 0
     while i < len(tokens):
-        if tokens[i] in values:
+        tok = tokens[i]
+        if tok in values:
             tokens[i] = values[tokens[i]]
+        if tok in tokens_dictionary:
+                tokens[i] += tokens_dictionary[tok]
         i += 1
 
     print()
@@ -622,6 +647,15 @@ def main():
     print(super_string)
 
     ascii_super = ASCIITransformer(super_string, True)
+
+    # ascii_super.insert(8, 'print(\'ws\')')
+    # ascii_super.insert(245, 'print(\'letter\')')
+    # ascii_super.insert(248, 'print(\'43\')')
+    # ascii_super.insert(251, 'print(\'42\')')
+    # ascii_super.insert(254, 'print(\'40\')')
+    # ascii_super.insert(257, 'print(\'41\')')
+
+    
 
     print("\nSuper String en ASCII:")
     print(ascii_super)
@@ -668,7 +702,7 @@ def main():
 
     print("Creando DFA Minimizacion")
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD)
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, True, True)
 
     print("DFA Minimizado terminado")
 

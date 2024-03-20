@@ -1,5 +1,5 @@
 import pickle
-import simuladorAFD as simAFD
+import simuladorScanner as simSCAN
 
 def readYalexFile(file):
     with open(file, 'r') as file:
@@ -19,13 +19,13 @@ def main():
     with open("DFAMin.pickle", "rb") as f:
         DFAMin = pickle.load(f)
     
-    for key in DFAMin:
-        print("\n\n\n",key, ": \n")
-        if type(DFAMin[key]) == list:
-            for item in DFAMin[key]:    
-                print(item)
-        else:
-            print(DFAMin[key])
+    # for key in DFAMin:
+    #     print("\n\n\n",key, ": \n")
+    #     if type(DFAMin[key]) == list:
+    #         for item in DFAMin[key]:    
+    #             print(item)
+    #     else:
+    #         print(DFAMin[key])
 
     # # Execute the code
 
@@ -40,6 +40,8 @@ def main():
     # code = '\n'.join(line.lstrip() for line in code.split('\n'))
 
     # exec(code)
+        
+    # hola 1234 + - * / ( )
 
     i = 0
     contador = 0
@@ -47,9 +49,13 @@ def main():
     lengthData = len(data)
 
     while i < lengthData:
-        print("i: " + str(i))
-        bol, num, valores = simAFD.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["final_states"], data, i)
-        print("Comentario: " + valores)
+        print("\ni: " + str(i))
+        num, valores = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["final_states"], data, i)
+        print("Command: " + valores)
+        try:
+            exec(valores)
+        except:
+            print("Error al momento de ejecutar el comando")
         contador += 1
         i = num
         continue

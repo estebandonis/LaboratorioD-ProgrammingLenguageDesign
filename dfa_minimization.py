@@ -38,8 +38,8 @@ def create_dfa_graph(states, acceptance_states, transitions, start_state):
 
     # Agrega transiciones como arcos
     for (source, symbol, target) in transitions:
-        if str(source) in state_nodes and str(target) in state_nodes:
-            edge = pydotplus.Edge(state_nodes[str(source)], state_nodes[str(target)], label=symbol)
+        if source in state_nodes and target in state_nodes:
+            edge = pydotplus.Edge(state_nodes[source], state_nodes[target], label=symbol)
             dot.add_edge(edge)
 
     return dot
@@ -53,7 +53,7 @@ def write_info_to_file(states, inicial, final, transiciones, file_path):
         file.write("Transicion = " + str(transiciones) + "\n")
 
 
-def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, graph=False):
+def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, graph=False, check=False):
 
     new_transitions = []
 
@@ -122,8 +122,12 @@ def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, gr
     new_estado_inicial = list(str(old_to_new[estado]) for estado in estado_inicial)
     new_estados_aceptacion = list(str(old_to_new[state]) for state in estados_aceptacion)
     new_states = list(str(state) for state in new_states)
-    new_alfabeto = list(int(symbol) for symbol in alfabeto)
-    transit = [(str(tran[0]), int(tran[1]), str(tran[2])) for tran in new_transitions]
+    if check:
+        new_alfabeto = list((int(symbol) if len(symbol) < 3 else symbol) for symbol in alfabeto)
+        transit = [((str(tran[0]), int(tran[1]), str(tran[2])) if len(tran[1]) < 5 else (str(tran[0]), tran[1], str(tran[2]))) for tran in new_transitions]
+    else:
+        new_alfabeto = list(int(symbol) for symbol in alfabeto)
+        transit = [(str(tran[0]), int(tran[1]), str(tran[2])) for tran in new_transitions]
 
 
     dictionary = {}
