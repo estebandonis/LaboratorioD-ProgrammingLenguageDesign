@@ -415,9 +415,6 @@ def getMachine(regex):
 
 def main():
 
-    operadores = ['*', '+', '?', '|', '(', ')', '!']
-    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-
     archivo = "slr-2.yal"
     Machines = {
         "Commentarios": "\"(*\" *[' '-'&''+'-'}''á''é''í''ó''ú''ñ''\n''\t']* *\"*)\"",
@@ -661,14 +658,6 @@ def main():
     print("Creando DFA Directo")
 
     estadoscon, alfabetocon, Dtran, estado_inicialcon, estado_finalcon = dfa_dir.exec(stack, node_list, alfabeto)
-
-    DFAdirect = {
-        "states": estadoscon,
-        "transitions": Dtran,
-        "symbols": alfabetocon,
-        "start_states": estado_inicialcon,
-        "final_states": estado_finalcon
-    }
 
     print("DFA Directo terminado")
 
