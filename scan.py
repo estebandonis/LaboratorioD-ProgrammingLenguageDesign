@@ -32,7 +32,7 @@ def main():
 
     while i < lengthData:
         print("\ni: " + str(i))
-        num, valores = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["final_states"], data, i)
+        num, valores = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["returns"], data, i)
         print("m: " + str(num))
         print("Command: " + valores)
         try:

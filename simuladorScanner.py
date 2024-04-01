@@ -1,6 +1,6 @@
 import time
 
-def exec(transiciones, estado_inicial, estados_aceptacion, cadena, i):
+def exec(transiciones, estado_inicial, returns, cadena, i):
 
     valores = ""
     error = False
@@ -19,9 +19,17 @@ def exec(transiciones, estado_inicial, estados_aceptacion, cadena, i):
             error = True
             break
         a += 1
+    
+    tempValor = valores
 
     for tran in transiciones:
         if estado_actual == tran[0] and type(tran[1]) == str:
             valores = tran[1]
+            break
+    
+    for ret in returns:
+        if tempValor == ret:
+            valores = returns[ret]
+            break
 
     return a, valores

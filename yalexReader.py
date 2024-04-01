@@ -684,16 +684,22 @@ def main():
 
     print("Creando DFA Minimizacion")
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, True, True)
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, False, True)
 
     print("DFA Minimizado terminado")
+
+    tempdiccionario = tokens_dictionary.copy()
+    for ret in tempdiccionario:
+        new_string = ret.replace('"', '')
+        tokens_dictionary[new_string] = tokens_dictionary.pop(ret)
 
     DFAMin = {
         "states": new_states,
         "transitions": new_transitions,
         "symbols": symbols,
         "start_states": newStart_states,
-        "final_states": newFinal_states
+        "final_states": newFinal_states,
+        "returns": tokens_dictionary,
     }
 
     with open('DFAMin.pickle', 'wb') as f:
