@@ -1,9 +1,11 @@
 import time
+import sys
 
 def exec(transiciones, estado_inicial, returns, cadena, i):
 
     valores = ""
     error = False
+    fallo = False
     estado_actual = estado_inicial
     a = i
     while a < len(cadena) and error == False:
@@ -19,6 +21,10 @@ def exec(transiciones, estado_inicial, returns, cadena, i):
             error = True
             break
         a += 1
+
+    if valores == "":
+        fallo = True
+        return a, valores, cadena[i], fallo
     
     tempValor = valores
 
@@ -32,4 +38,4 @@ def exec(transiciones, estado_inicial, returns, cadena, i):
             valores = returns[ret]
             break
 
-    return a, valores
+    return a, valores, tempValor, fallo

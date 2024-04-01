@@ -1,11 +1,13 @@
 import pickle
-import simuladorScanner as simSCAN
 import time
+
+import simuladores.simuladorScanner as simSCAN
 
 def readYalexFile(file):
     with open(file, 'r') as file:
         data = file.read()
     return data
+
 
 def main():
     print("scan.py: main()")
@@ -23,18 +25,34 @@ def main():
     # # Remove leading spaces from each line in the string
     # code = '\n'.join(line.lstrip() for line in code.split('\n'))
 
+    start_time = time.time()
+
+    readString(data, DFAMin)
+
+    end_time = time.time()
+
+    time_taken = end_time - start_time
+
+    print(f"\nTime taken by the operation is {time_taken} seconds")
+
+
+def readString(data, DFAMin):
     i = 0
     contador = 0
 
     lengthData = len(data)
 
-    start_time = time.time()
-
     while i < lengthData:
         print("\ni: " + str(i))
-        num, valores = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["returns"], data, i)
+        num, valores, temp, error = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["returns"], data, i)
+        if error:
+            print(f"Valor no reconocido: '{temp}'")
+            break
+
         print("m: " + str(num))
+        print("Valor: " + temp)
         print("Command: " + valores)
+        print("Ejecución: ")
         try:
             exec(valores)
         except:
@@ -42,12 +60,6 @@ def main():
         contador += 1
         i = num
         continue
-
-    end_time = time.time()
-
-    time_taken = end_time - start_time
-
-    print(f"\nTime taken by the operation is {time_taken} seconds")
 
 if __name__ == "__main__":
     main()
