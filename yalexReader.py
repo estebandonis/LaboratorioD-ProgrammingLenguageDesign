@@ -13,7 +13,7 @@ import asciis.ascii_transformer as ascii_reg
 
 def main():
 
-    archivo = "slrs/slr-4.yal"
+    archivo = "slrs/slr-2.yal"
     Machines = {
         "Commentarios": "\"(*\" *[' '-'&''+'-'}''á''é''í''ó''ú''ñ''\n''\t']* *\"*)\"",
         "Declaration": "let +['a'-'z']* +=",

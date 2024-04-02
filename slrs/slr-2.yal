@@ -14,6 +14,9 @@ rule tokens =
     ws        { print('WHITESPACE') }               (* Cambie por una acción válida, que devuelva el token *)
   | id        { print('ID') }
   | number    { print('NUMBER') }
+  | "IF"       { print('IF') }
+  | "THEN"       { print('THEN') }
+  | "ELSE"       { print('ELSE') }
   | '+'       { print('PLUS') }
   | '-'       { print('MINUS') }
   | '*'       { print('TIMES') }

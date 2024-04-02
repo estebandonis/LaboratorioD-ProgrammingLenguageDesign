@@ -47,7 +47,9 @@ def readString(data, DFAMin):
         num, valores, temp, error = simSCAN.exec(DFAMin["transitions"], DFAMin["start_states"], DFAMin["returns"], data, i)
         if error:
             print(f"Valor no reconocido: '{temp}'")
-            break
+            i += 1
+            print("m: " + str(i))
+            continue
 
         print("m: " + str(num))
         print("Valor: " + temp)
