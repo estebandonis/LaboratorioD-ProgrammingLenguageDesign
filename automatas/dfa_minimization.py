@@ -123,7 +123,15 @@ def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, gr
     new_states = list(str(state) for state in new_states)
     if check:
         new_alfabeto = list((int(symbol) if len(symbol) < 3 else symbol) for symbol in alfabeto)
-        transit = [((str(tran[0]), int(tran[1]), str(tran[2])) if len(tran[1]) < 5 else (str(tran[0]), tran[1], str(tran[2]))) for tran in new_transitions]
+        # transit = [((str(tran[0]), int(tran[1]), str(tran[2])) if len(tran[1]) < 5 else (str(tran[0]), tran[1], str(tran[2]))) for tran in new_transitions]
+        transit = []
+        for tran in new_transitions:
+            try:
+                int(tran[1])
+                transit.append((str(tran[0]), int(tran[1]), str(tran[2])))
+            except:
+                transit.append((str(tran[0]), tran[1], str(tran[2])))
+
     else:
         new_alfabeto = list(int(symbol) for symbol in alfabeto)
         transit = [(str(tran[0]), int(tran[1]), str(tran[2])) for tran in new_transitions]

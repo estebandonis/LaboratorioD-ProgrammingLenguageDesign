@@ -11,6 +11,42 @@ import asciis.ascii_transformer_machines as ascii_machine
 import asciis.ascii_transformer as ascii_reg
 
 
+symbol_dict = {
+    "!": "exclamation_mark",
+    "@": "at_sign",
+    "#": "hash",
+    "$": "dollar",
+    "%": "percent",
+    "^": "caret",
+    "&": "ampersand",
+    "*": "asterisk",
+    "(": "open_parenthesis",
+    ")": "close_parenthesis",
+    "-": "hyphen",
+    "_": "underscore",
+    "=": "equals",
+    "+": "plus",
+    "[": "open_bracket",
+    "]": "close_bracket",
+    "{": "open_brace",
+    "}": "close_brace",
+    ";": "semicolon",
+    ":": "colon",
+    ",": "comma",
+    ".": "dot",
+    "<": "less_than",
+    ">": "greater_than",
+    "/": "slash",
+    "?": "question_mark",
+    "|": "vertical_bar",
+    "\\": "backslash",
+    "`": "grave_accent",
+    "~": "tilde",
+    "\"": "double_quote",
+    "'": "single_quote"
+}
+
+
 def main():
 
     archivo = "slrs/slr-2.yal"
@@ -24,41 +60,6 @@ def main():
         "Tokens2": "'|' *['\"'-'}']*",
         "Returns": "{ *(^})*}",
         "Trailer": "{ *(^@)*@}",
-    }
-
-    symbol_dict = {
-        "!": "exclamation_mark",
-        "@": "at_sign",
-        "#": "hash",
-        "$": "dollar",
-        "%": "percent",
-        "^": "caret",
-        "&": "ampersand",
-        "*": "asterisk",
-        "(": "open_parenthesis",
-        ")": "close_parenthesis",
-        "-": "hyphen",
-        "_": "underscore",
-        "=": "equals",
-        "+": "plus",
-        "[": "open_bracket",
-        "]": "close_bracket",
-        "{": "open_brace",
-        "}": "close_brace",
-        ";": "semicolon",
-        ":": "colon",
-        ",": "comma",
-        ".": "dot",
-        "<": "less_than",
-        ">": "greater_than",
-        "/": "slash",
-        "?": "question_mark",
-        "|": "vertical_bar",
-        "\\": "backslash",
-        "`": "grave_accent",
-        "~": "tilde",
-        "\"": "double_quote",
-        "'": "single_quote"
     }
 
     start_time = time.time()
@@ -76,6 +77,19 @@ def main():
     print("Values Final: ")
     for lal in values:
         print(lal, ": ", values[lal])
+
+
+    print("Creando archivo .py")
+
+    with open('lex.py', 'w') as f:
+        f.write(diccionario['Header'][1:-1])
+        for value in tokens_dictionary:
+            write_value, function = defString(value, tokens_dictionary[value][2:-2])
+            tokens_dictionary[value] = f"{{ {function} }}"
+            f.write(write_value)
+        f.write(diccionario['Trailer'][1:-2])
+
+    print("Archivo .py creado")
 
     i = 0
     while i < len(tokens):
@@ -137,7 +151,7 @@ def main():
 
     print("Creando DFA Minimizacion")
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, True, True)
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, False, True)
 
     print("DFA Minimizado terminado")
 
@@ -145,7 +159,7 @@ def main():
     for ret in tempdiccionario:
         if ret[0] == '"' and ret[-1] == '"':
             new_string = ret.replace('"', '')
-            tokens_dictionary[new_string] = tokens_dictionary.pop(ret)
+            tokens_dictionary[new_string] = tokens_dictionary.pop(ret)[2:-2]
         else:
             tokens_dictionary.pop(ret)
 
@@ -163,14 +177,6 @@ def main():
 
     print("DFA Minimizado guardado en DFAMin.pickle")
 
-    print("Creando archivo .py")
-
-    with open('lex.py', 'w') as f:
-        f.write(diccionario['Header'][1:-1])
-        for value in tempdiccionario:
-            f.write(defString(value, tempdiccionario[value][2:-2]))
-        f.write(diccionario['Trailer'][1:-2])
-
     end_time = time.time()
 
     time_taken = end_time - start_time
@@ -182,9 +188,12 @@ def defString(name, valor):
     name = name.replace('"', '')
     name = name.replace('\'', '')
     if len(name) == 1:
-        return f"def n{ord(name)}():\n\tprint('{name}')\n\n"
+        if name in symbol_dict:
+            name = symbol_dict[name]
+            return f"def {name}():\n\t{valor}\n\n", f"{name}()"
+        return f"def n{ord(name)}():\n\t{valor}\n\n", f"n{ord(name)}()"
 
-    return f"def {name}():\n\t{valor}\n\n"
+    return f"def {name}():\n\t{valor}\n\n", f"{name}()"
 
 
 

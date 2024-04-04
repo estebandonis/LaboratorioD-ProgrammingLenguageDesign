@@ -21,23 +21,23 @@ def THEN():
 def ELSE():
 	print('ELSE')
 
-def n43():
-	print('+')
+def plus():
+	print('PLUS')
 
-def n45():
-	print('-')
+def hyphen():
+	print('MINUS')
 
-def n42():
-	print('*')
+def asterisk():
+	print('TIMES')
 
-def n47():
-	print('/')
+def slash():
+	print('DIV')
 
-def n40():
-	print('(')
+def open_parenthesis():
+	print('LPAREN')
 
-def n41():
-	print(')')
+def close_parenthesis():
+	print('RPAREN')
 
 
 def readYalexFile(file):
