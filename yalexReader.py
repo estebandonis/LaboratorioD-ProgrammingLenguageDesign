@@ -16,17 +16,54 @@ def main():
     archivo = "slrs/slr-2.yal"
     Machines = {
         "Commentarios": "\"(*\" *[' '-'&''+'-'}''á''é''í''ó''ú''ñ''\n''\t']* *\"*)\"",
+        "Header": "{ *(^})*}",
         "Declaration": "let +['a'-'z']* +=",
-        "Variables": "('['(^])*]|^( \n)*)+",
+        "Variables": "('['(^])*]|^[ \n]*)+",
         "Reglas": "rule *tokens *=",
         "Tokens1": "['&'-'}']+",
         "Tokens2": "'|' *['\"'-'}']*",
         "Returns": "{ *(^})*}",
+        "Trailer": "{ *(^@)*@}",
+    }
+
+    symbol_dict = {
+        "!": "exclamation_mark",
+        "@": "at_sign",
+        "#": "hash",
+        "$": "dollar",
+        "%": "percent",
+        "^": "caret",
+        "&": "ampersand",
+        "*": "asterisk",
+        "(": "open_parenthesis",
+        ")": "close_parenthesis",
+        "-": "hyphen",
+        "_": "underscore",
+        "=": "equals",
+        "+": "plus",
+        "[": "open_bracket",
+        "]": "close_bracket",
+        "{": "open_brace",
+        "}": "close_brace",
+        ";": "semicolon",
+        ":": "colon",
+        ",": "comma",
+        ".": "dot",
+        "<": "less_than",
+        ">": "greater_than",
+        "/": "slash",
+        "?": "question_mark",
+        "|": "vertical_bar",
+        "\\": "backslash",
+        "`": "grave_accent",
+        "~": "tilde",
+        "\"": "double_quote",
+        "'": "single_quote"
     }
 
     start_time = time.time()
 
-    values, tokens, tokens_dictionary = readYalexFile(Machines, archivo)
+    values, tokens, tokens_dictionary, diccionario = readYalexFile(Machines, archivo)
 
     print("Values: ")
     for val in values:
@@ -100,14 +137,17 @@ def main():
 
     print("Creando DFA Minimizacion")
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, False, True)
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, True, True)
 
     print("DFA Minimizado terminado")
 
     tempdiccionario = tokens_dictionary.copy()
     for ret in tempdiccionario:
-        new_string = ret.replace('"', '')
-        tokens_dictionary[new_string] = tokens_dictionary.pop(ret)
+        if ret[0] == '"' and ret[-1] == '"':
+            new_string = ret.replace('"', '')
+            tokens_dictionary[new_string] = tokens_dictionary.pop(ret)
+        else:
+            tokens_dictionary.pop(ret)
 
     DFAMin = {
         "states": new_states,
@@ -123,11 +163,29 @@ def main():
 
     print("DFA Minimizado guardado en DFAMin.pickle")
 
+    print("Creando archivo .py")
+
+    with open('lex.py', 'w') as f:
+        f.write(diccionario['Header'][1:-1])
+        for value in tempdiccionario:
+            f.write(defString(value, tempdiccionario[value][2:-2]))
+        f.write(diccionario['Trailer'][1:-2])
+
     end_time = time.time()
 
     time_taken = end_time - start_time
 
     print(f"\nTime taken by the operation is {time_taken} seconds")
+
+
+def defString(name, valor):
+    name = name.replace('"', '')
+    name = name.replace('\'', '')
+    if len(name) == 1:
+        return f"def n{ord(name)}():\n\tprint('{name}')\n\n"
+
+    return f"def {name}():\n\t{valor}\n\n"
+
 
 
 def getYalexFile(file):
@@ -136,7 +194,7 @@ def getYalexFile(file):
     return data
 
 
-def getMachine(regex):
+def getMachine(regex, graph=False):
     ascii_regex = ascii_machine.ASCIITransformer(regex)
     postfix_regex = shun.exec(ascii_regex)
     stack, node_list, alfabeto = tree.exec(postfix_regex)
@@ -162,7 +220,7 @@ def getMachine(regex):
     for i in estado_finalcon:
         estados_aceptacionAFD.add(str(i))
 
-    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD)
+    new_states, symbols, new_transitions, newStart_states, newFinal_states = dfa_min.exec(estadosAFD, alfabetoAFD, transicionesAFD, estado_inicialAFD, estados_aceptacionAFD, graph=graph, check=False)
     return new_states, new_transitions, newStart_states, newFinal_states
 
 
@@ -211,6 +269,11 @@ def readYalexFile(Machines, archivo):
     comments_states, comments_transitions, comments_inicial, comments_final = getMachine(ascii_comments)
     print("AFD para comentarios generado")
 
+    ascii_headers = Machines['Header']
+    print("Generando AFD para header")
+    headers_states, headers_transitions, headers_inicial, headers_final = getMachine(ascii_headers)
+    print("AFD para comentarios generado")
+
     ascii_declaration = Machines['Declaration']
     print("Generando AFD para declaration")
     declaration_states, declaration_transitions, declaration_inicial, declaration_final = getMachine(ascii_declaration)
@@ -241,6 +304,11 @@ def readYalexFile(Machines, archivo):
     returns_states, returns_transitions, returns_inicial, returns_final = getMachine(ascii_returns)
     print("AFD para returns generado")
 
+    ascii_trailer = Machines['Trailer']
+    print("Generando AFD para trailer")
+    trailer_states, trailer_transitions, trailer_inicial, trailer_final = getMachine(ascii_trailer)
+    print("AFD para returns generado")
+
     data = getYalexFile(archivo)
 
     i = 0
@@ -253,6 +321,9 @@ def readYalexFile(Machines, archivo):
     contador = 0
     length_data = len(data)
     read_tokens = False
+    header_bool = False
+    token1_bool = False
+    
     while i < length_data:
         bol, num, valores = simAFD.exec(comments_transitions, comments_inicial, comments_final, data, i)
         if bol:
@@ -261,6 +332,16 @@ def readYalexFile(Machines, archivo):
             contador += 1
             i = num
             continue
+
+        if header_bool == False:
+            bol, num, valores = simAFD.exec(headers_transitions, headers_inicial, headers_final, data, i)
+            if bol and header_bool == False:
+                print("Header: " + valores)
+                diccionario['Header'] = valores
+                contador += 1
+                i = num
+                header_bool = True
+                continue
 
         bol, num, valores = simAFD.exec(rules_transitions, rules_inicial, rules_final, data, i)
         if bol:
@@ -303,20 +384,16 @@ def readYalexFile(Machines, archivo):
                 contador += 1
                 i = num
                 continue
+        
+        bol, num, valores = simAFD.exec(trailer_transitions, trailer_inicial, trailer_final, data, i)
+        if bol:
+            print("Trailer: " + valores)
+            diccionario['Trailer'] = valores
+            contador += 1
+            i = num
+            continue
 
         if read_tokens:
-            bol, num, valores = simAFD.exec(returns_transitions, returns_inicial, returns_final, data, i)
-            if bol:
-                print("Returns: " + valores)
-                diccionario[contador] = valores
-                if temp_tokens != []:
-                    tokens_dictionary[temp_tokens.pop()] = valores
-                else:
-                    print("Error léxico, no existe un token para el siguiente return")
-                    sys.exit()
-                contador += 1
-                i = num
-                continue
 
             bol, num, valores = simAFD.exec(tokens2_transitions, tokens2_inicial, tokens2_final, data, i)
             if bol:
@@ -328,17 +405,62 @@ def readYalexFile(Machines, archivo):
                 temp_tokens.append(listValues[1])
                 contador += 1
                 i = num
+
+                while True:
+                    bol, num, valores = simAFD.exec(returns_transitions, returns_inicial, returns_final, data, i)
+                    if bol:
+                        print("Returns: " + valores)
+                        diccionario[contador] = valores
+                        if temp_tokens != []:
+                            tokens_dictionary[temp_tokens.pop()] = valores
+                        else:
+                            print("Error léxico, no existe un token para el siguiente return")
+                            sys.exit()
+                        contador += 1
+                        i = num
+                        break
+
+                    if data[i] == ' ' or data[i] == '\n' or data[i] == '\t':
+                        i += 1
+                        continue
+
+                    else:
+                        print("Error lexico en la linea: ", data[i])
+                        sys.exit()
                 continue
 
-            bol, num, valores = simAFD.exec(tokens1_transitions, tokens1_inicial, tokens1_final, data, i)
-            if bol:
-                print("Tokens1: " + valores)
-                diccionario[contador] = valores
-                tokens.append(valores)
-                temp_tokens.append(valores)
-                contador += 1
-                i = num
-                continue
+            if token1_bool == False:
+                bol, num, valores = simAFD.exec(tokens1_transitions, tokens1_inicial, tokens1_final, data, i)
+                if bol:
+                    print("Tokens1: " + valores)
+                    diccionario[contador] = valores
+                    tokens.append(valores)
+                    temp_tokens.append(valores)
+                    contador += 1
+                    i = num
+                    token1_bool = True
+                    
+                    while True:
+                        bol, num, valores = simAFD.exec(returns_transitions, returns_inicial, returns_final, data, i)
+                        if bol:
+                            print("Returns: " + valores)
+                            diccionario[contador] = valores
+                            if temp_tokens != []:
+                                tokens_dictionary[temp_tokens.pop()] = valores
+                            else:
+                                print("Error léxico, no existe un token para el siguiente return")
+                                sys.exit()
+                            contador += 1
+                            i = num
+                            break
+
+                        if data[i] == ' ' or data[i] == '\n' or data[i] == '\t':
+                            i += 1
+                            continue
+
+                        else:
+                            break
+                    continue
 
         if data[i] == ' ' or data[i] == '\n' or data[i] == '\t':
             i += 1
@@ -356,7 +478,7 @@ def readYalexFile(Machines, archivo):
     for i in diccionario:
         print(i, ": ", diccionario[i])
 
-    return values, tokens, tokens_dictionary
+    return values, tokens, tokens_dictionary, diccionario
 
 
 main()

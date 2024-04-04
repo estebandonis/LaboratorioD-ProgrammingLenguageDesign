@@ -54,7 +54,6 @@ def write_info_to_file(states, inicial, final, transiciones, file_path):
 
 
 def exec(estados, alfabeto, transiciones, estado_inicial, estados_aceptacion, graph=False, check=False):
-
     new_transitions = []
 
     partitions = {frozenset(state for state in estados if state in estados_aceptacion), frozenset(state for state in estados if state not in estados_aceptacion),}

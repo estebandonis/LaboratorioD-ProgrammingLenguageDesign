@@ -1,7 +1,44 @@
+
 import pickle
 import time
 
 import simuladores.simuladorScanner as simSCAN
+def ws():
+	print('WHITESPACE')
+
+def id():
+	print('ID')
+
+def number():
+	print('NUMBER')
+
+def IF():
+	print('IF')
+
+def THEN():
+	print('THEN')
+
+def ELSE():
+	print('ELSE')
+
+def n43():
+	print('+')
+
+def n45():
+	print('-')
+
+def n42():
+	print('*')
+
+def n47():
+	print('/')
+
+def n40():
+	print('(')
+
+def n41():
+	print(')')
+
 
 def readYalexFile(file):
     with open(file, 'r') as file:
@@ -67,3 +104,4 @@ def readString(data, DFAMin):
 
 if __name__ == "__main__":
     main()
+

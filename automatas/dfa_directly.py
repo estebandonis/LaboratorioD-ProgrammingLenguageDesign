@@ -82,7 +82,6 @@ def set_estados(primer, elements, node_list, Dtran, Destados):
 
 
 def exec(stack_arbol, node_list, alfabeto, graph=False):
-
     Destados = []
     Dtran = []
 

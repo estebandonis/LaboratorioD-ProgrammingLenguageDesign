@@ -178,10 +178,10 @@ def ASCIITransformer(infix_regex, check_operators = False):
     
     def handle_negate (infix_regex, i, new_infix):
         next = infix_regex[i+1]
-        if next == '(':
+        if next == '[':
             temp = []
             j = i + 2
-            while j < len(infix_regex) and infix_regex[j] != ')':
+            while j < len(infix_regex) and infix_regex[j] != ']':
                 temp.append(infix_regex[j])
                 j += 1
             i = j
@@ -206,26 +206,36 @@ def ASCIITransformer(infix_regex, check_operators = False):
                     new_infix.append('|')
                 j += 1
                 
-        elif next == '[':
-            Set = []
-            infix_regex, i, Set = handle_brackets(infix_regex, i, Set)
+        elif next == '(':
+            temp = []
+            j = i + 2
+            while j < len(infix_regex) and infix_regex[j] != ')':
+                temp.append(infix_regex[j])
+                j += 1
+            i = j
 
-            Set = set(Set)
-
-            Set.discard(')')
-            Set.discard('(')
-            Set.discard('|')
+            new_temp = []
+            a = 0
+            while a < len(temp):
+                t = temp[a]
+                if t == '\\':
+                    temp, a, new_infix = handle_slash(temp, a, new_infix)
+                    continue
+                new_temp.append(ord(t))
+                a += 1 
 
             j = 0
             for j in range(0, Universo + 1):
-                if j == Universo and j not in Set:
+                if j == Universo:
                     new_infix.append(j)
                     break
-                if j not in Set:
+                if j not in new_temp:
                     new_infix.append(j)
                     new_infix.append('|')
                 j += 1
-            
+
+            for element in new_temp:
+                new_infix.append(element)
 
         else:
             next_ascii = ord(next)

@@ -33,9 +33,10 @@ def exec(transiciones, estado_inicial, returns, cadena, i):
             valores = tran[1]
             break
     
-    for ret in returns:
-        if tempValor == ret:
-            valores = returns[ret]
-            break
+    if returns != {}:
+        for ret in returns:
+            if tempValor == ret:
+                valores = returns[ret]
+                break
 
     return a, valores, tempValor, fallo
