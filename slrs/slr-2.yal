@@ -31,6 +31,8 @@ rule tokens =
   | '('       { print('LPAREN') }
   | ')'       { print('RPAREN') }
 
+(* Introducir cualquier trailer aqui *)
+
 {
 def readYalexFile(file):
     with open(file, 'r') as file:
@@ -97,6 +99,4 @@ def readString(data, DFAMin):
 if __name__ == "__main__":
     main()
 
-@}
-
-(* Introducir cualquier trailer aqui *)
+}
