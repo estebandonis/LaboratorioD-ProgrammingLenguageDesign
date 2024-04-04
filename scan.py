@@ -3,6 +3,7 @@ import pickle
 import time
 
 import simuladores.simuladorScanner as simSCAN
+
 def ws():
 	print('WHITESPACE')
 
