@@ -25,7 +25,7 @@ def ELSE():
 def plus():
 	print('PLUS')
 
-def hyphen():
+def minus():
 	print('MINUS')
 
 def asterisk():
@@ -61,9 +61,6 @@ def main():
         DFAMin = pickle.load(f)
 
     print("Returns: ", DFAMin['returns'])
-
-    # # Remove leading spaces from each line in the string
-    # code = '\n'.join(line.lstrip() for line in code.split('\n'))
 
     start_time = time.time()
 
@@ -105,3 +102,6 @@ def readString(data, DFAMin):
 
 if __name__ == "__main__":
     main()
+
+
+print('Termino')
