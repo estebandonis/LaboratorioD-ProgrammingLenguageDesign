@@ -62,10 +62,6 @@ def main():
         "Trailer": "{ *(_)*",
     }
 
-    # "Trailer": "{ *(^@)*@}"
-    #  "Trailer": "{ *(_)*|\n}"
-    # "Trailer": "{ *(^[\n}]*(\n|})(^})*)\n}"
-
     start_time = time.time()
 
     values, tokens, tokens_dictionary, diccionario = readYalexFile(Machines, archivo)
@@ -78,6 +74,14 @@ def main():
 
 
     print("\nCreando archivo .py")
+
+    imports = """
+import pickle
+import time
+
+import simuladores.simuladorScanner as simSCAN
+
+"""
 
     scanner = """
 def readYalexFile(file):
@@ -145,6 +149,7 @@ if __name__ == "__main__":
 """
 
     with open('scan.py', 'w') as f:
+        # f.write(imports)
         f.write(diccionario['Header'][1:-1])
         for value in tokens_dictionary:
             write_value, function = defString(value, tokens_dictionary[value][2:-2])
@@ -152,7 +157,7 @@ if __name__ == "__main__":
             f.write(write_value)
 
         f.write(scanner)
-        f.write(diccionario['Trailer'][1:-2])
+        f.write(diccionario['Trailer'][1:-1])
 
     print("Archivo .py creado\n")
 
@@ -401,6 +406,10 @@ def readYalexFile(Machines, archivo):
                 contador += 1
                 i = num
                 header_bool = True
+
+                if "let " in valores:
+                    print("Error léxico, no se cerro la llave en el header")
+                    sys.exit()
                 continue
 
         bol, num, valores = simAFD.exec(rules_transitions, rules_inicial, rules_final, data, i)
@@ -451,6 +460,11 @@ def readYalexFile(Machines, archivo):
             diccionario['Trailer'] = valores
             contador += 1
             i = num
+
+            if valores[-1] != "}":
+                print("Error léxico, no se cerro la llave en el trailer")
+                sys.exit()
+
             continue
 
         if read_tokens:
