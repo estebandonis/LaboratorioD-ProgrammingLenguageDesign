@@ -4,42 +4,27 @@ import time
 
 import simuladores.simuladorScanner as simSCAN
 
-def ws():
+#Diego Franco - 20240 prueba
+def WS():
 	print('WHITESPACE')
 
-def id():
-	print('ID')
+def INTEGER():
+	print("ENTEROS")
 
-def number():
-	print('NUMBER')
+def FLOAT():
+	print("DECIMALES")
 
 def IF():
-	print('IF')
+	print("IF")
 
-def THEN():
-	print('THEN')
+def FOR():
+	print("FOR")
 
-def ELSE():
-	print('ELSE')
+def IDENTIFICADOR():
+	print("IDENTIFICADOR")
 
-def plus():
-	print('PLUS')
-
-def minus():
-	print('MINUS')
-
-def asterisk():
-	print('TIMES')
-
-def slash():
-	print('DIV')
-
-def open_parenthesis():
-	print('LPAREN')
-
-def close_parenthesis():
-	print('RPAREN')
-
+def CADENAS():
+	print("CADENA DE CARACTERES")
 
 def readYalexFile(file):
     with open(file, 'r') as file:
@@ -50,7 +35,7 @@ def readYalexFile(file):
 def main():
     print("scan.py: main()")
 
-    archivo = "string.txt"
+    archivo = "slrs/entrada3.txt"
 
     # Leer .txt
     data = readYalexFile(archivo)
@@ -103,5 +88,4 @@ def readString(data, DFAMin):
 if __name__ == "__main__":
     main()
 
-
-print('Termino')
+#Diego Franco - 20240

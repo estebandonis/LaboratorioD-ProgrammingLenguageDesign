@@ -175,7 +175,6 @@ def ASCIITransformer(infix_regex):
         new_infix.append(')')
         return infix_regex, i, new_infix
     
-    
     def handle_negate (infix_regex, i, new_infix):
         next = infix_regex[i+1]
         if next == '(':
@@ -358,6 +357,7 @@ def ASCIITransformer(infix_regex):
         elif char == '{':
             infix_regex, i, new_infix = corchetes(infix_regex, i, new_infix)
             continue
+        
         else:
             print("Error léxico, operador no reconocido: ", char)
             sys.exit()             

@@ -3,10 +3,8 @@
 (* Introducir cualquier header aqui *)
 
 {
-import pickle
-import time
 
-import simuladores.simuladorScanner as simSCAN
+print("inicio")
 
 }
 
