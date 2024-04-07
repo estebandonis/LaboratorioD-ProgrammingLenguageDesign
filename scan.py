@@ -35,7 +35,7 @@ def readYalexFile(file):
 def main():
     print("scan.py: main()")
 
-    archivo = "slrs/entrada3.txt"
+    archivo = "string.txt"
 
     # Leer .txt
     data = readYalexFile(archivo)
@@ -88,4 +88,4 @@ def readString(data, DFAMin):
 if __name__ == "__main__":
     main()
 
-#Diego Franco - 20240
+#Diego Franco - 20240} 

@@ -22,4 +22,4 @@ rule tokens =
   | identificador { print("IDENTIFICADOR") }
   | cadenas { print("CADENA DE CARACTERES") }
 
-{#Diego Franco - 20240}
+{#Diego Franco - 20240} 

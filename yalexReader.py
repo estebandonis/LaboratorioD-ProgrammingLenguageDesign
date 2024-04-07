@@ -463,7 +463,7 @@ def readYalexFile(Machines, archivo):
             contador += 1
             i = num
 
-            if valores[-1] != "}" or valores[-2] != "}" or valores[-3] != "}":
+            if '}' not in valores[-3:-1]:
                 print("Error léxico, no se cerro la llave en el trailer")
                 sys.exit()
 
