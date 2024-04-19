@@ -177,7 +177,7 @@ if __name__ == "__main__":
     ascii_super = ascii_reg.ASCIITransformer(super_string)
 
     for tok in tokens_dictionary:
-        print(tok, ": ", tokens_dictionary[tok])    
+        print(tok, ": ", tokens_dictionary[tok])
 
     super_postfix = shun.exec(ascii_super)
     stack, node_list, alfabeto = tree.exec(super_postfix)
@@ -326,7 +326,7 @@ def setValues(values):
                     new_string = valor[:first] + values[valo] + valor[last:]
                     valor = new_string
                     values[val] = new_string
-    
+
     return values
 
 
@@ -390,7 +390,7 @@ def readYalexFile(Machines, archivo):
     read_tokens = False
     header_bool = False
     token1_bool = False
-    
+
     while i < length_data:
         bol, num, valores = simAFD.exec(comments_transitions, comments_inicial, comments_final, data, i)
         if bol:
@@ -455,7 +455,7 @@ def readYalexFile(Machines, archivo):
                 contador += 1
                 i = num
                 continue
-        
+
         bol, num, valores = simAFD.exec(trailer_transitions, trailer_inicial, trailer_final, data, i)
         if bol:
             print("Trailer: " + valores)
@@ -463,7 +463,7 @@ def readYalexFile(Machines, archivo):
             contador += 1
             i = num
 
-            if '}' not in valores[-3:-1]:
+            if '}' not in valores[-3:]:
                 print("Error léxico, no se cerro la llave en el trailer")
                 sys.exit()
 
@@ -476,8 +476,11 @@ def readYalexFile(Machines, archivo):
                 print("Token: " + valores)
                 diccionario[contador] = valores
                 listValues = valores.split()
-                tokens.append(listValues[0])
-                tokens.append(listValues[1])
+                if tokens == []:
+                    tokens.append(listValues[1])
+                else:
+                    tokens.append(listValues[0])
+                    tokens.append(listValues[1])
                 temp_tokens.append(listValues[1])
                 contador += 1
                 i = num

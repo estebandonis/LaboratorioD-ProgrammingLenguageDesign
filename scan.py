@@ -88,4 +88,4 @@ def readString(data, DFAMin):
 if __name__ == "__main__":
     main()
 
-#Diego Franco - 20240} 
+#Diego Franco - 20240}
